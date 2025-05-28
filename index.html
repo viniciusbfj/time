@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>controle de tempo</title>
+</head>
+<body>
+    <h2 id="relogio">
+    
+    
+    <script >
+        function atualizaRelogio() {
+            const agora = new Date();
+            const horas = agora.getHours().toString();
+            const minut = agora.getMinutes().toString ();
+            const segun = agora.getSeconds().toString();
+
+           document.getElementById
+           ("relogio").innerText = `${horas}:${minut}:${segun}`;
+        }
+        setInterval(atualizaRelogio, 1000);
+        atualizaRelogio();
+    </script>
+
+    <hr>
+    <h2>Timer Progressivo</h2>
+    <h2 id="timer">00:00:00</h2>
+    <button onclick="iniciar()">Iniciar</button>
+
+    <hr>
+    <h2>Timer Regressivo</h2>
+    <div>
+        <input type="number" id="horas" placeholder="Horas" min="0" max="23">
+        <input type="number" id="minutos" placeholder="Minutos" min="0" max="59">
+        <input type="number" id="segundos" placeholder="Segundos" min="0" max="59">
+    </div>
+    <h2 id="timerRegressivo">00:00:00</h2>
+    <button onclick="iniciarRegressivo()">Iniciar</button>
+    <button onclick="pausarRegressivo()">Pausar</button>
+    <button onclick="resetarRegressivo()">Resetar</button>
+    
+    <script>
+        // Timer progressivo existente
+        let segundos = 0;
+        let intervalo;
+
+        function formatar(segundos){
+            const h = String(Math.floor(segundos/3600)).padStart(2, '0');
+            const m = String(Math.floor((segundos % 3600) / 60)).padStart(2, '0');
+            const s = String(segundos % 60).padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        }
+        function atualizarTimer(){
+            document.getElementById("timer").innerText = formatar(segundos);
+        }
+        function iniciar(){
+            if(!intervalo){
+                intervalo = setInterval(() => {
+                    segundos++;
+                    atualizarTimer();
+                }, 1000);
+            }
+        }
+
+        // Timer regressivo novo
+        let segundosRegressivo = 0;
+        let intervaloRegressivo;
+        let tempoInicial = 0;
+
+        function atualizarTimerRegressivo() {
+            document.getElementById("timerRegressivo").innerText = formatar(segundosRegressivo);
+            if (segundosRegressivo <= 0) {
+                clearInterval(intervaloRegressivo);
+                intervaloRegressivo = null;
+                alert("Tempo esgotado!");
+            }
+        }
+
+        function iniciarRegressivo() {
+            if (!intervaloRegressivo) {
+                if (segundosRegressivo <= 0) {
+                    const horas = parseInt(document.getElementById("horas").value || 0);
+                    const minutos = parseInt(document.getElementById("minutos").value || 0);
+                    const segundos = parseInt(document.getElementById("segundos").value || 0);
+                    
+                    segundosRegressivo = horas * 3600 + minutos * 60 + segundos;
+                    tempoInicial = segundosRegressivo;
+                }
+                
+                if (segundosRegressivo > 0) {
+                    intervaloRegressivo = setInterval(() => {
+                        segundosRegressivo--;
+                        atualizarTimerRegressivo();
+                    }, 1000);
+                }
+            }
+        }
+
+        function pausarRegressivo() {
+            if (intervaloRegressivo) {
+                clearInterval(intervaloRegressivo);
+                intervaloRegressivo = null;
+            }
+        }
+
+        function resetarRegressivo() {
+            pausarRegressivo();
+            segundosRegressivo = tempoInicial;
+            atualizarTimerRegressivo();
+        }
+    </script>
+</body>
+</html>
